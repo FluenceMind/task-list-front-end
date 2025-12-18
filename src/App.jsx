@@ -19,14 +19,21 @@ const TASKS = [
 const App = () => {
   const [tasks, setTasks] = useState(TASKS);
   const [errorMessage, setErrorMessage] = useState('');
-  //wave 04
+
   useEffect(() => {
     axios.get('http://localhost:5000/tasks')
       .then((response) => {
-        setTasks(response.data);
+        const normalizedTasks = response.data.map(task => ({
+          id: task.id,
+          title: task.title,
+          isComplete: task.is_complete
+        })); /* so the task is a repelicate of the real data into the desired form and only the things listed out will be recorded into the new task*/
+
+        setTasks(normalizedTasks);
       })
       .catch((error) => {
-        setErrorMessage(<section>{error.response.data.message}</section>);
+      /*safe handle error.response?.data?.message (if any .xx is missing will have an error) */
+        setErrorMessage(error.response?.data?.message || 'Failed to load tasks');
       });
   }, []);
 
@@ -48,7 +55,6 @@ const App = () => {
     });
   };
 
-
   const deleteTask = (taskId) => {
     axios.delete(`http://localhost:5000/tasks/${taskId}`);
 
@@ -58,11 +64,14 @@ const App = () => {
   };
 
   return (
-    <TaskList
-      tasks={tasks}
-      onToggleComplete={toggleTaskComplete}
-      onDelete={deleteTask}
-    />
+    <div>
+      {errorMessage}
+      <TaskList
+        tasks={tasks}
+        onToggleComplete={toggleTaskComplete}
+        onDelete={deleteTask}
+      />
+    </div>
   );
 };
 
