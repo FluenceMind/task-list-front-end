@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const NewTaskForm = ({ addTask }) => {
-    const [taskData, setTaskData] = useState(EmptyTask);
+const NewTaskForm = ({ onSubmitTask }) => {
+  const [taskData, setTaskData] = useState(EmptyTask);
 
-    const EmptyTask = {title: '', isComplete:'false',}
+  const EmptyTask = {title: '', isComplete:'false'};
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        const trimmedTitle = taskData.title.trim();
-        if (!trimmedTitle) return;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const trimmedTitle = taskData.title.trim();
+    if (!trimmedTitle) return;
 
-        setTaskData(EmptyTask);
-        addTask({...taskData,isComplete:taskData.isComplete.isComplete === 'true'});
-      };
+    setTaskData(EmptyTask);
+    onSubmitTask({...taskData,isComplete:taskData.isComplete.isComplete === 'true'});
+  };
 
   const handleChange = (e) =>{
     const field = e.target.name;
@@ -40,7 +39,7 @@ const NewTaskForm = ({ addTask }) => {
                 title: e.target.value,
             })
         }
-            placeholder="New task"/> 
+            placeholder="New task"/>
         </div>
 
         <div>
@@ -74,6 +73,6 @@ const NewTaskForm = ({ addTask }) => {
 // };
 
 NewTaskForm.propTypes = {
-    onSubmitTask: PropTypes.func.isRequired,};
+  onSubmitTask: PropTypes.func.isRequired};
 
 export default NewTaskForm;
