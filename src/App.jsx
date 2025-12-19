@@ -2,6 +2,8 @@ import TaskList from './components/TaskList.jsx';
 import './App.css';
 import { useState, useEffect} from 'react';
 import axios from 'axios';
+import NewTaskForm from './components/NewTaskForm.jsx';
+
 
 const TASKS = [
   {
@@ -63,9 +65,32 @@ const App = () => {
     });
   };
 
+
+  // wave 05
+  const addTask = (title) => {
+    axios
+      .post ('http://localhost:5000/tasks', {title})
+      .then ((response) => {
+        const newTask = {
+          id: response.data.id,
+          title: response.data.title,
+          isComplete: response.data.is_complete,
+        };
+
+      setTasks((prevTasks) => [newTask, ...prevTasks]);
+      })
+      .catch((error) => {
+        setErrorMessage(
+          error.response?.data?.message || 'Failed to create task'
+        );
+      });
+      }
+  };
+
   return (
     <div>
-      {errorMessage}
+      {errorMessage && <p>{errorMessage}</p>}
+      <NewTaskForm on SubmitTask={addTask} />
       <TaskList
         tasks={tasks}
         onToggleComplete={toggleTaskComplete}
