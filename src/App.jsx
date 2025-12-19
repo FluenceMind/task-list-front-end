@@ -67,9 +67,21 @@ const App = () => {
 
 
   // wave 05
-  const addTask = (title) => {
-    axios
-      .post ('http://localhost:5000/tasks', {title})
+  const addTask = (newTask) => {
+    let body = {};
+    if (newTask.isComplete){
+      body = {title: newTask.title,
+        description: '',
+        completedAt : new Date()};
+    }else{
+      body = {title: newTask.title,
+        description: '',
+        is_complete :newTask.isComplete};
+    }
+
+
+    axios.post ('http://localhost:5000/tasks', body)
+
       .then ((response) => {
         const newTask = {
           id: response.data.id,
@@ -77,20 +89,19 @@ const App = () => {
           isComplete: response.data.is_complete,
         };
 
-      setTasks((prevTasks) => [newTask, ...prevTasks]);
+        setTasks((prevTasks) => [newTask, ...prevTasks]);
       })
       .catch((error) => {
         setErrorMessage(
           error.response?.data?.message || 'Failed to create task'
         );
       });
-      }
   };
 
   return (
     <div>
       {errorMessage && <p>{errorMessage}</p>}
-      <NewTaskForm on SubmitTask={addTask} />
+      <NewTaskForm onSubmitTask={addTask} />
       <TaskList
         tasks={tasks}
         onToggleComplete={toggleTaskComplete}
